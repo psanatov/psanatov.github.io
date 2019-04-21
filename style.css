@@ -35,7 +35,7 @@ html, body {
   word-wrap: break-word;
   white-space: pre-wrap;
   display: block;
-  line-height: 1.1em;
+  line-height: 0.9em;
   overflow-y: scroll;
   position: relative;
   color: #0da350;
