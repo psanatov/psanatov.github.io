@@ -42,7 +42,10 @@ function Terminal(config) {
     reset: clear,
     reboot: reboot,
     whoami: whoami,
-    help: help
+    help: help,
+    info: info,
+    about: info,
+    email: email
   };
 
   var fauxInput = document.createElement("textarea");
@@ -53,7 +56,7 @@ function Terminal(config) {
   }
 
   function getLeader() {
-    return cwd + "$ ";
+    return cwd + "~$ ";
   }
 
   function renderTerm() {
@@ -97,18 +100,58 @@ function Terminal(config) {
   }
 
   function whoami(argv, argc) {
-    return "{bold}" + userName + "{/bold}\n";
+    return "\n> {bold}" + userName + "{/bold}\n\n";
   }
 
   function help(argv, argc) {
-    let helpText = "{italic}List of available commands:\n";
-
+    
+    let helpText = "";
+    helpText += "\n";
+    helpText += "{italic}{bold}List of available commands:{/bold}\n";
+    helpText += "\n";
+    
+    helpText += "\n";
     helpText += "{notice}'reboot'{/notice}  - resets session \n";
     helpText += "{notice}'clear'{/notice}   - clears terminal buffer \n";
     helpText += "{notice}'reset'{/notice}   - clears terminal buffer \n";
     helpText += "{notice}'whoami'{/notice}  - who am I? \n";
+    helpText += "{notice}'info'{/notice}    - some personal info about me \n";
+    helpText += "{notice}'about'{/notice}   - some personal info about me \n";
+    helpText += "\n";
 
     return helpText + "{/italic}";
+  }
+
+  function info(argv, argc) {
+    let infoText = ""; 
+    infoText += "\n";
+    infoText += "{italic}{notice}{bold}### ABOUT ME ### {/bold}{/notice}\n";
+    infoText += "\n";
+    
+    infoText += "Name: [{notice}Pavel Sanatov{/notice}] \n";
+    
+    infoText += "\n";
+    infoText += "Twitter/Facebook/Instagram: [{notice}@lejvap{/notice}] \n";    
+    infoText += "\n";
+
+    infoText += "Fun fact: [{notice}On the Internet of Things nobody knows you're a toaster{/notice}] \n";
+    
+    
+    infoText += "\n";
+    infoText += "If you want to see my email, type: '{notice}email{/notice}' \n";
+    infoText += "\n";
+
+    return infoText + "{/italic}";
+  }
+
+  function email(argv, argc) {
+    let emailText = "{italic}"; 
+    emailText += "\n";
+    emailText += "{notice}{bold}Please, see commit history @GitHub!{/bold}\n";
+    emailText += "\n";
+   
+
+    return emailText + "{/italic}";
   }
 
   function isCoreCommand(line) {
@@ -221,10 +264,11 @@ function Terminal(config) {
         lineBuffer += e.key;
       } else {
         // Hot key input (i.e Ctrl+C)
-        if (e.key === "c") {
-          lineBuffer = lineBuffer;
-          lineBuffer = "\n";
-        }
+        // TOOD: Fix Ctrl+C
+        // if (e.key === "c") {
+        //   lineBuffer = lineBuffer;
+        //   lineBuffer = "\n";
+        // }
         if (e.key === "r") { 
           window.location.reload();
         }
@@ -263,8 +307,9 @@ function Terminal(config) {
 // but without it we cannot create instance of terminal
 new Terminal({
   el: document.getElementById("term"),
-  cwd: domain === "" ? `${userName}@future:/` : `${userName}@${domain}:/`,
+  cwd: domain === "" ? `<strong>${userName}@future:</strong>` : `${userName}@${domain}:`,
   initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`,
+  autoFocus: true,
   maxBufferLength: 8192,
   maxCommandHistory: 500,
 
