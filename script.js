@@ -1,5 +1,31 @@
 const domain = "psanatov.github.io";
-const userName = "guest";
+const userName = generateUserName();
+
+function generateUserName() {
+  const ts = Date.now();
+  let userName = "user";
+  let max = 420;
+
+  // Not sure what's the motivation behind this,
+  // but I think I cannot proceed without doing it...
+  if (ts % 2 === 0) {
+    max = ts / 2;
+
+    if (max === 420) {
+      console.log("Whale, whale, whale...");
+    }
+  } else if (ts % 3 === 0) {
+    max = ts / 3;
+  } else if (ts % 5 === 0) {
+    max = ts / 5;
+  }
+
+  userName += Math.floor(Math.random() * Math.floor(max));
+
+  console.log('Hit!');
+
+  return userName;
+};
 
 function fauxTerm(config) {
   var term = config.el || document.getElementById("term");
@@ -14,8 +40,8 @@ function fauxTerm(config) {
   var maxCommandHistory = config.maxCommandHistory || 100;
   var autoFocus = config.autoFocus || false;
   var coreCmds = {
-    clear: clear
-    // whoami: whoamiFunc
+    clear: clear,
+    reset: clear
   };
 
   var fauxInput = document.createElement("textarea");
@@ -66,6 +92,7 @@ function fauxTerm(config) {
   }
 
   function whoamiFunc(argv, argc) {
+
     termBuffer = userName;
     return userName;
   }
@@ -98,7 +125,7 @@ function fauxTerm(config) {
     //If it's not a blank line.
     if (cmd !== "") {
       if (cmd === "whoami") {
-        stdout = "guest\n";
+        stdout = `${userName}\n`;
         writeToBuffer(stdout);
 
         addLineToHistory(line);
@@ -213,12 +240,12 @@ function fauxTerm(config) {
     renderTerm();
   }
 
-  term.addEventListener("click", function(e) {
+  term.addEventListener("click", function (e) {
     fauxInput.focus();
     term.classList.add("term-focus");
   });
   fauxInput.addEventListener("keydown", acceptInput);
-  fauxInput.addEventListener("blur", function(e) {
+  fauxInput.addEventListener("blur", function (e) {
     term.classList.remove("term-focus");
   });
   renderTerm();
