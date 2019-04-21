@@ -309,7 +309,7 @@ function Terminal(config) {
 // but without it we cannot create instance of terminal
 new Terminal({
   el: document.getElementById("term"),
-  cwd: domain === "" ? `<strong>${userName}@future:</strong>` : `<strong>${userName}@${domain}:<strong>`,
+  cwd: domain === "" ? `<strong>${userName}@future:</strong>` : `<strong>${userName}@${domain}:</strong>`,
   initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`,
   autoFocus: true,
   maxBufferLength: 8192,
