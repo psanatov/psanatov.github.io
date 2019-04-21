@@ -25,8 +25,17 @@ function generateUserName() {
   return userName;
 };
 
+const jokes = [
+  "I just got kicked out of Barnes and Noble for moving all their classic statistical theory books to the religious section.",
+  "They call me Dirichlet because all my potential is latent and awaiting allocation.",
+  "Do Neural Networks Dream of Strictly Convex Sheep?",
+  "Shout out to all those algorithms creating fake Twitter accounts to follow me. You predicted I'd be cool before I was cool. #falsepositive",
+  "I got this vintage Dirichlet prior at the thrift shop for like $5. There's some light updating on a few corners but otherwise it's like new.",
+  "Batch algorithms: YOLO*, Online algorithms: Keep Updates and Carry On  (*You Only Learn Once).",
+  "Tech joke accounts are so mainstream. I'm setting up a @DeepMLHipster account where I tweet ironically about tweeting ironically about ML."
+];
+
 function Terminal(config) {
-  
   var term = config.el || document.getElementById("term");
   var termBuffer = config.initialMessage || "";
   var lineBuffer = config.initialLine || "";
@@ -47,7 +56,8 @@ function Terminal(config) {
     info: info,
     about: info,
     email: email,
-    color: color
+    color: color,
+    joke: joke
   };
 
   var fauxInput = document.createElement("textarea");
@@ -119,6 +129,7 @@ function Terminal(config) {
     helpText += "{notice}'info'{/notice}            - some personal info about me \n";
     helpText += "{notice}'about'{/notice}           - some personal info about me \n";
     helpText += "{notice}'color [COLOR]'{/notice}   - available colors: [green, orange, white] \n";
+    helpText += "{notice}'joke'{/notice}            - computer will try to tell you a joke \n";
     helpText += "\n";
 
     helpText += "**HINT**: You can use arrow keys to browse through command history ;-)\n";
@@ -169,20 +180,20 @@ function Terminal(config) {
         // termClassList.replace("term-default", color);
         switch (color) {
           case "green":
-          termClassList.replace(termClassList[1], "term-default");
-          document.getElementsByClassName("bell")[0].style.background = "#0da350 !important";
+            termClassList.replace(termClassList[1], "term-default");
+            document.getElementsByClassName("bell")[0].style.background = "#0da350 !important";
             break;
           case "orange":
-          termClassList.replace(termClassList[1], "term-orange");
-          document.getElementsByClassName("bell")[0].style.background = "#e6aa4a !important";
+            termClassList.replace(termClassList[1], "term-orange");
+            document.getElementsByClassName("bell")[0].style.background = "#e6aa4a !important";
             break;
           case "white":
-          termClassList.replace(termClassList[1], "term-white");
-          document.getElementsByClassName("bell")[0].style.background = "#fff !important";
+            termClassList.replace(termClassList[1], "term-white");
+            document.getElementsByClassName("bell")[0].style.background = "#fff !important";
             break;
           default:
-          termClassList.replace(termClassList[1], "term-default");
-          document.getElementsByClassName("bell")[0].style.background = "#0da350 !important";
+            termClassList.replace(termClassList[1], "term-default");
+            document.getElementsByClassName("bell")[0].style.background = "#0da350 !important";
         }
 
         return "Color has been changed!\n";
@@ -191,6 +202,21 @@ function Terminal(config) {
       return "{italic}{bold}Warning: cannot find desired color!{/bold}{/italic}\n";
     }
   }
+
+  function joke(argv, argc) {
+    let jokeText = "";
+
+    const randomJokeNumber = Math.floor(Math.random() * jokes.length);
+    const joke = jokes[randomJokeNumber];
+
+    jokeText += "\n";
+    jokeText += "{notice}Computer says:{/notice}\n";
+    jokeText += "{italic}{bold}" + joke + "{/bold}{/italic}\n";
+    jokeText += "\n";
+
+    return jokeText;
+  }
+
 
   function isCoreCommand(line) {
     if (coreCmds.hasOwnProperty(line)) {
@@ -335,7 +361,7 @@ function Terminal(config) {
   // TODO: If we click without listener for a click event
   // then we couldn't type anymore
   focusFunction();
-  
+
   term.addEventListener("click", focusFunction);
 
   fauxInput.addEventListener("keydown", processInput);
