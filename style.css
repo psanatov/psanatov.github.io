@@ -72,6 +72,10 @@ body {
   font-weight: bold;
 }
 
+.term .italic{ 
+  font-style: italic;
+}
+
 .bell {
   margin: 0.08em;
   width: 10px;

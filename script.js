@@ -1,4 +1,4 @@
-const domain = "psanatov.github.io";
+const domain = window.location.hostname;
 const userName = generateUserName();
 
 function generateUserName() {
@@ -12,7 +12,7 @@ function generateUserName() {
     max = ts / 2;
 
     if (max === 420) {
-      console.log("Whale, whale, whale...");
+      console.log("Welcome to the future!");
     }
   } else if (ts % 3 === 0) {
     max = ts / 3;
@@ -30,7 +30,7 @@ function Terminal(config) {
   var termBuffer = config.initialMessage || "";
   var lineBuffer = config.initialLine || "";
   var cwd = config.cwd || "~/";
-  var tags = config.tags || ["red", "blue", "white", "bold"];
+  var tags = config.tags || ["red", "blue", "white", "bold", "italic"];
   var processCommand = config.cmd || false;
   var maxBufferLength = config.maxBufferLength || 8192;
   var commandHistory = [];
@@ -139,7 +139,7 @@ function Terminal(config) {
             stdout = processCommand(argv, argc);
           } else {
             stdout =
-              "{white}{bold}" + cmd + "{/bold}{/white}: command not found\n";
+              "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
           }
         } else {
           //Execute a core command
@@ -150,7 +150,7 @@ function Terminal(config) {
         //If an actual command happened.
         if (stdout === false) {
           stdout =
-            "{white}{bold}" + cmd + "{/bold}{/white}: command not found\n";
+            "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
         }
 
         stdout = renderStdOut(stdout);
@@ -188,9 +188,7 @@ function Terminal(config) {
       222,
       186,
       188,
-      191,
-      17, // ctrl
-      82
+      191
     ];
     if (inputKeyMap.indexOf(keyCode) > -1) {
       return true;
@@ -254,22 +252,13 @@ function Terminal(config) {
     term.classList.remove("term-focus");
   });
 
-  document.getElementById("term").style.display = "none";
-  var millisecondsToWait = Math.random();
-
-  setTimeout(function () {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("term").style.display = "block";
-    // Whatever you want to do after the wait
-  }, millisecondsToWait);
   renderTerm();
-
-
 }
+
 var myTerm = new Terminal({
   el: document.getElementById("term"),
-  cwd: `${userName}@${domain}:/`,
-  initialMessage: `Welcome to ${domain}!\n`
+  cwd: domain === "" ? `${userName}@future:/` : `${userName}@${domain}:/`,
+  initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`
   // tags: ["red", "blue", "white", "bold"],
   // maxBufferLength: 8192,
   // maxCommandHistory: 500,
@@ -287,17 +276,17 @@ var myTerm = new Terminal({
   //   return false;
   // }
 });
-var mySecondTerm = new Terminal({
-  el: document.getElementById("term2"),
-  cwd: `${userName}@${domain}:/`,
-  initialMessage: `Welcome to ${domain}!\n`
-  /*
-  autoFocus: false,
-  tags: ['red', 'blue', 'white', 'bold'],
-  maxBufferLength: 8192,
-  maxCommandHistory: 500,
-  cmd: function(argv, argc) {
-    console.log(argv);
-    return false;
-  }*/
-});
+// var mySecondTerm = new Terminal({
+//   el: document.getElementById("term2"),
+//   cwd: `${userName}@${domain}:/`,
+//   initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`
+//   /*
+//   autoFocus: false,
+//   tags: ['red', 'blue', 'white', 'bold'],
+//   maxBufferLength: 8192,
+//   maxCommandHistory: 500,
+//   cmd: function(argv, argc) {
+//     console.log(argv);
+//     return false;
+//   }*/
+// });
