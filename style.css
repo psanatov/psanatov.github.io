@@ -26,8 +26,8 @@ html, body {
   background: #000;
   height: 100%;
   margin: 0 auto;
-  /* font-family: 'VT323', monospace; */
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'VT323', monospace;
+  /* font-family: 'Share Tech Mono', monospace; */
   -webkit-font-smoothing: none;
   font-size: 14pt;
   font-weight: 100;
@@ -35,7 +35,7 @@ html, body {
   word-wrap: break-word;
   white-space: pre-wrap;
   display: block;
-  line-height: 1.3em;
+  line-height: 1.1em;
   overflow-y: scroll;
   position: relative;
   color: #0da350;
