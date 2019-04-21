@@ -40,7 +40,8 @@ function Terminal(config) {
   var coreCmds = {
     clear: clear,
     reset: clear,
-    reboot: reboot
+    reboot: reboot,
+    whoami: whoami
   };
 
   var fauxInput = document.createElement("textarea");
@@ -65,7 +66,7 @@ function Terminal(config) {
   function writeToBuffer(str) {
     termBuffer += str;
 
-    //Stop the buffer getting massive.
+    // Stop the buffer getting massive.
     if (termBuffer.length > maxBufferLength) {
       var diff = termBuffer.length - maxBufferLength;
       termBuffer = termBuffer.substr(diff);
@@ -94,9 +95,8 @@ function Terminal(config) {
     window.location.reload();
   }
 
-  function whoamiFunc(argv, argc) {
-    termBuffer = userName;
-    return userName;
+  function whoami(argv, argc) {
+    return userName + "\n";
   }
 
   function isCoreCommand(line) {
@@ -112,7 +112,7 @@ function Terminal(config) {
   }
 
   function processLine() {
-    //Dispatch command
+    // Dispatch command
     var stdout,
       line = lineBuffer,
       argv = line.split(" "),
@@ -124,40 +124,31 @@ function Terminal(config) {
     writeToBuffer(getLeader() + lineBuffer);
     lineBuffer = "";
 
-    //If it's not a blank line.
+    // If it's not a blank line.
     if (cmd !== "") {
-      // TODO: move to coreCmd
-      if (cmd === "whoami") {
-        writeToBuffer(`${userName}\n`);
-
-        addLineToHistory(line);
-      } else {
-        //If the command is not registered by the core.
-        if (!isCoreCommand(cmd)) {
-          //User registered command
-          if (processCommand) {
-            stdout = processCommand(argv, argc);
-          } else {
-            stdout =
-              "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
-          }
+      if (!isCoreCommand(cmd)) {
+        // User registered command
+        if (processCommand) {
+          stdout = processCommand(argv, argc);
         } else {
-          //Execute a core command
-          // pass 
-          stdout = coreCommand(argv, argc);
-        }
-
-        //If an actual command happened.
-        if (stdout === false) {
           stdout =
             "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
         }
-
-        stdout = renderStdOut(stdout);
-        writeToBuffer(stdout);
-
-        addLineToHistory(line);
+      } else {
+        // Execute a core command
+        stdout = coreCommand(argv, argc);
       }
+
+      // If an actual command happened.
+      if (stdout === false) {
+        stdout =
+          "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
+      }
+
+      stdout = renderStdOut(stdout);
+      writeToBuffer(stdout);
+
+      addLineToHistory(line);
     }
 
     renderTerm();
@@ -208,10 +199,10 @@ function Terminal(config) {
     }
 
     if (newIndex > -1) {
-      //Change line to something from history.
+      // Change line to something from history.
       lineBuffer = commandHistory[newIndex];
     } else {
-      //Blank line...
+      // Blank line...
       lineBuffer = "";
     }
   }
@@ -223,10 +214,14 @@ function Terminal(config) {
 
     if ((e.keyCode >= 48 && e.keyCode <= 90) || isInputKey(e.keyCode)) {
       if (!e.ctrlKey) {
-        //Character input
+        // Character input
         lineBuffer += e.key;
       } else {
-        //Hot key input? I.e Ctrl+C
+        // debugger;
+        if (e.key === "r") { 
+          window.location.reload()
+        }
+        // Hot key input? I.e Ctrl+C
       }
     } else if (e.keyCode === 13) {
       processLine();
@@ -243,14 +238,19 @@ function Terminal(config) {
     renderTerm();
   }
 
-  term.addEventListener("click", function (e) {
+  const focusFunction = function (e) {
     fauxInput.focus();
     term.classList.add("term-focus");
-  });
+  };
+
+  focusFunction();
+
+  term.addEventListener("click", focusFunction);
+  // term.addEventListener(document.hidden, focusFunction);
   fauxInput.addEventListener("keydown", acceptInput);
-  fauxInput.addEventListener("blur", function (e) {
-    term.classList.remove("term-focus");
-  });
+  // fauxInput.addEventListener("blur", function (e) {
+  //   term.classList.remove("term-focus");
+  // });
 
   renderTerm();
 }
@@ -268,8 +268,8 @@ var myTerm = new Terminal({
   //   for (command of argv) {
   //     console.log("command: ", command);
   //     if (command == "whoami") {
-  //       termBuffer = "";
-  //       lineBuffer = termBuffer + getLeader() + "whoami";
+  //       // termBuffer = "";
+  //       // lineBuffer = termBuffer + getLeader() + "whoami";
   //     }
   //   }
 
