@@ -22,12 +22,10 @@ function generateUserName() {
 
   userName += Math.floor(Math.random() * Math.floor(max));
 
-  console.log('Hit!');
-
   return userName;
 };
 
-function fauxTerm(config) {
+function Terminal(config) {
   var term = config.el || document.getElementById("term");
   var termBuffer = config.initialMessage || "";
   var lineBuffer = config.initialLine || "";
@@ -41,7 +39,8 @@ function fauxTerm(config) {
   var autoFocus = config.autoFocus || false;
   var coreCmds = {
     clear: clear,
-    reset: clear
+    reset: clear,
+    reboot: reboot
   };
 
   var fauxInput = document.createElement("textarea");
@@ -91,8 +90,11 @@ function fauxTerm(config) {
     return "";
   }
 
-  function whoamiFunc(argv, argc) {
+  function reboot(argv, argc) {
+    window.location.reload();
+  }
 
+  function whoamiFunc(argv, argc) {
     termBuffer = userName;
     return userName;
   }
@@ -124,9 +126,9 @@ function fauxTerm(config) {
 
     //If it's not a blank line.
     if (cmd !== "") {
+      // TODO: move to coreCmd
       if (cmd === "whoami") {
-        stdout = `${userName}\n`;
-        writeToBuffer(stdout);
+        writeToBuffer(`${userName}\n`);
 
         addLineToHistory(line);
       } else {
@@ -141,6 +143,7 @@ function fauxTerm(config) {
           }
         } else {
           //Execute a core command
+          // pass 
           stdout = coreCommand(argv, argc);
         }
 
@@ -173,7 +176,7 @@ function fauxTerm(config) {
   }
 
   function isInputKey(keyCode) {
-    var inputKeyMap = [
+    const inputKeyMap = [
       32,
       190,
       192,
@@ -185,7 +188,9 @@ function fauxTerm(config) {
       222,
       186,
       188,
-      191
+      191,
+      17, // ctrl
+      82
     ];
     if (inputKeyMap.indexOf(keyCode) > -1) {
       return true;
@@ -248,9 +253,20 @@ function fauxTerm(config) {
   fauxInput.addEventListener("blur", function (e) {
     term.classList.remove("term-focus");
   });
+
+  document.getElementById("term").style.display = "none";
+  var millisecondsToWait = Math.random();
+
+  setTimeout(function () {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("term").style.display = "block";
+    // Whatever you want to do after the wait
+  }, millisecondsToWait);
   renderTerm();
+
+
 }
-var myTerm = new fauxTerm({
+var myTerm = new Terminal({
   el: document.getElementById("term"),
   cwd: `${userName}@${domain}:/`,
   initialMessage: `Welcome to ${domain}!\n`
@@ -271,7 +287,7 @@ var myTerm = new fauxTerm({
   //   return false;
   // }
 });
-var mySecondTerm = new fauxTerm({
+var mySecondTerm = new Terminal({
   el: document.getElementById("term2"),
   cwd: `${userName}@${domain}:/`,
   initialMessage: `Welcome to ${domain}!\n`
