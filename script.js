@@ -57,7 +57,8 @@ function Terminal(config) {
     about: info,
     email: email,
     color: color,
-    joke: joke
+    joke: joke,
+    version: version
   };
 
   var fauxInput = document.createElement("textarea");
@@ -130,6 +131,7 @@ function Terminal(config) {
     helpText += "{notice}'about'{/notice}           - some personal info about me \n";
     helpText += "{notice}'color [COLOR]'{/notice}   - available colors: [green, orange, white] \n";
     helpText += "{notice}'joke'{/notice}            - computer will try to tell you a joke \n";
+    helpText += "{notice}'version'{/notice}         - stats for nerds \n";
     helpText += "\n";
 
     helpText += "**HINT**: You can use arrow keys to browse through command history ;-)\n";
@@ -217,6 +219,15 @@ function Terminal(config) {
     return jokeText;
   }
 
+  function version(argv, argc) {
+    let versionText = "";
+    
+    versionText += "\n";
+    versionText += "{bold}> {notice}v0.0.420{/notice}{/bold}";
+    versionText += "\n";
+
+    return versionText + "\n";
+  }
 
   function isCoreCommand(line) {
     if (coreCmds.hasOwnProperty(line)) {
