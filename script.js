@@ -118,7 +118,6 @@ function Terminal(config) {
     helpText += "{notice}'about'{/notice}   - some personal info about me \n";
     helpText += "\n";
 
-    helpText += "\n";
     helpText += "**HINT**: You can use arrow keys to browse through command history ;-)\n";
     helpText += "\n";
 
