@@ -96,7 +96,7 @@ function Terminal(config) {
   }
 
   function whoami(argv, argc) {
-    return userName + "\n";
+    return "{bold}" + userName + "{/bold}\n";
   }
 
   function isCoreCommand(line) {
@@ -118,7 +118,7 @@ function Terminal(config) {
       argv = line.split(" "),
       argc = argv.length;
 
-    var cmd = argv[0];
+    const cmd = argv[0];
 
     lineBuffer += "\n";
     writeToBuffer(getLeader() + lineBuffer);
@@ -167,23 +167,12 @@ function Terminal(config) {
   }
 
   function isInputKey(keyCode) {
-    const inputKeyMap = [
-      32,
-      190,
-      192,
-      189,
-      187,
-      220,
-      221,
-      219,
-      222,
-      186,
-      188,
-      191
-    ];
+    const inputKeyMap = [ 32, 190, 192, 189, 187, 220, 221, 219, 222, 186, 188, 191 ];
+    
     if (inputKeyMap.indexOf(keyCode) > -1) {
       return true;
     }
+
     return false;
   }
 
@@ -207,9 +196,9 @@ function Terminal(config) {
     }
   }
 
-  function acceptInput(e) {
+  function processInput(e) {
+    // TODO: Add support for `&&` in the future 
     e.preventDefault();
-
     fauxInput.value = "";
 
     if ((e.keyCode >= 48 && e.keyCode <= 90) || isInputKey(e.keyCode)) {
@@ -217,11 +206,14 @@ function Terminal(config) {
         // Character input
         lineBuffer += e.key;
       } else {
-        // debugger;
-        if (e.key === "r") { 
-          window.location.reload()
+        // Hot key input (i.e Ctrl+C)
+        if (e.key === "c") {
+          lineBuffer = lineBuffer;
+          lineBuffer = "\n";
         }
-        // Hot key input? I.e Ctrl+C
+        if (e.key === "r") { 
+          window.location.reload();
+        }
       }
     } else if (e.keyCode === 13) {
       processLine();
@@ -243,50 +235,23 @@ function Terminal(config) {
     term.classList.add("term-focus");
   };
 
+  // TODO: If we click without listener for a click event
+  // then we couldn't type anymore
   focusFunction();
-
   term.addEventListener("click", focusFunction);
-  // term.addEventListener(document.hidden, focusFunction);
-  fauxInput.addEventListener("keydown", acceptInput);
-  // fauxInput.addEventListener("blur", function (e) {
-  //   term.classList.remove("term-focus");
-  // });
+
+  fauxInput.addEventListener("keydown", processInput);
 
   renderTerm();
 }
 
-var myTerm = new Terminal({
+// TODO: Not sure why we have to create new constructor,
+// but without it we cannot create instance of terminal
+new Terminal({
   el: document.getElementById("term"),
   cwd: domain === "" ? `${userName}@future:/` : `${userName}@${domain}:/`,
-  initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`
-  // tags: ["red", "blue", "white", "bold"],
-  // maxBufferLength: 8192,
-  // maxCommandHistory: 500,
-  // cmd: function(argv, argc) {
-  //   console.log(argv);
+  initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`,
+  maxBufferLength: 8192,
+  maxCommandHistory: 500,
 
-  //   for (command of argv) {
-  //     console.log("command: ", command);
-  //     if (command == "whoami") {
-  //       // termBuffer = "";
-  //       // lineBuffer = termBuffer + getLeader() + "whoami";
-  //     }
-  //   }
-
-  //   return false;
-  // }
 });
-// var mySecondTerm = new Terminal({
-//   el: document.getElementById("term2"),
-//   cwd: `${userName}@${domain}:/`,
-//   initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`
-//   /*
-//   autoFocus: false,
-//   tags: ['red', 'blue', 'white', 'bold'],
-//   maxBufferLength: 8192,
-//   maxCommandHistory: 500,
-//   cmd: function(argv, argc) {
-//     console.log(argv);
-//     return false;
-//   }*/
-// });
