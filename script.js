@@ -30,7 +30,7 @@ function Terminal(config) {
   var termBuffer = config.initialMessage || "";
   var lineBuffer = config.initialLine || "";
   var cwd = config.cwd || "~/";
-  var tags = config.tags || ["red", "blue", "white", "bold", "italic"];
+  var tags = config.tags || ["error", "notice", "bold", "italic"];
   var processCommand = config.cmd || false;
   var maxBufferLength = config.maxBufferLength || 8192;
   var commandHistory = [];
@@ -41,7 +41,8 @@ function Terminal(config) {
     clear: clear,
     reset: clear,
     reboot: reboot,
-    whoami: whoami
+    whoami: whoami,
+    help: help
   };
 
   var fauxInput = document.createElement("textarea");
@@ -99,6 +100,17 @@ function Terminal(config) {
     return "{bold}" + userName + "{/bold}\n";
   }
 
+  function help(argv, argc) {
+    let helpText = "{italic}List of available commands:\n";
+
+    helpText += "{notice}'reboot'{/notice}  - resets session \n";
+    helpText += "{notice}'clear'{/notice}   - clears terminal buffer \n";
+    helpText += "{notice}'reset'{/notice}   - clears terminal buffer \n";
+    helpText += "{notice}'whoami'{/notice}  - who am I? \n";
+
+    return helpText + "{/italic}";
+  }
+
   function isCoreCommand(line) {
     if (coreCmds.hasOwnProperty(line)) {
       return true;
@@ -132,7 +144,8 @@ function Terminal(config) {
           stdout = processCommand(argv, argc);
         } else {
           stdout =
-            "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
+            "{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}: {error}command not found!{/error}\n"
+            + "Type 'help' to see list of available commands.{/italic}\n";
         }
       } else {
         // Execute a core command
@@ -142,7 +155,8 @@ function Terminal(config) {
       // If an actual command happened.
       if (stdout === false) {
         stdout =
-          "{italic}{white}{bold}" + cmd.trim() + "{/bold}{/white}: command not found!{/italic}\n";
+          "{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}: {error}command not found!{/error}\n"
+          + "Type 'help' to see list of available commands.{/italic}\n";
       }
 
       stdout = renderStdOut(stdout);

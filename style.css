@@ -54,20 +54,20 @@ body {
 	}
 }
 
+/* TODO: Make auto focus when browser tab has focus */
 .term-focus {
   text-shadow: none;
   color: #1bff80;
 }
 
-.term .red {
-  color: red;
+.term .error {
+  color: #1bff80;
 }
-.term .blue {
-  color: blue;
+
+.term .notice {
+  color: #1bff80;
 }
-.term .white {
-  color: #63ff8a;
-}
+
 .term .bold {
   font-weight: bold;
 }
