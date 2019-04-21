@@ -108,7 +108,6 @@ function Terminal(config) {
     let helpText = "";
     helpText += "\n";
     helpText += "{italic}{bold}List of available commands:{/bold}\n";
-    helpText += "\n";
     
     helpText += "\n";
     helpText += "{notice}'reboot'{/notice}  - resets session \n";
@@ -117,6 +116,10 @@ function Terminal(config) {
     helpText += "{notice}'whoami'{/notice}  - who am I? \n";
     helpText += "{notice}'info'{/notice}    - some personal info about me \n";
     helpText += "{notice}'about'{/notice}   - some personal info about me \n";
+    helpText += "\n";
+
+    helpText += "\n";
+    helpText += "**HINT**: You can use arrow keys to browse through command history ;-)\n";
     helpText += "\n";
 
     return helpText + "{/italic}";
@@ -187,8 +190,8 @@ function Terminal(config) {
           stdout = processCommand(argv, argc);
         } else {
           stdout =
-            "{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}: {error}command not found!{/error}\n"
-            + "Type 'help' to see list of available commands.{/italic}\n";
+            "\n{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}: {error}command not found!{/error}\n"
+            + "Type 'help' to see list of available commands.{/italic}\n\n";
         }
       } else {
         // Execute a core command
@@ -198,8 +201,8 @@ function Terminal(config) {
       // If an actual command happened.
       if (stdout === false) {
         stdout =
-          "{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}: {error}command not found!{/error}\n"
-          + "Type 'help' to see list of available commands.{/italic}\n";
+          "\n{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}: {error}command not found!{/error}\n"
+          + "Type 'help' to see list of available commands.{/italic}\n\n";
       }
 
       stdout = renderStdOut(stdout);
