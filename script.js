@@ -1,12 +1,46 @@
-const domain = "psanatov.github.io";
-const userName = "guest";
+const domain = window.location.hostname;
+const userName = generateUserName();
 
-function fauxTerm(config) {
+function generateUserName() {
+  const ts = Date.now();
+  let userName = "user";
+  let max = 420;
+
+  // Not sure what's the motivation behind this,
+  // but I think I cannot proceed without doing it...
+  if (ts % 2 === 0) {
+    max = ts / 2;
+
+    if (max === 420) {
+      console.log("Welcome to the future!");
+    }
+  } else if (ts % 3 === 0) {
+    max = ts / 3;
+  } else if (ts % 5 === 0) {
+    max = ts / 5;
+  }
+
+  userName += Math.floor(Math.random() * Math.floor(max));
+
+  return userName;
+};
+
+const jokes = [
+  "I just got kicked out of Barnes and Noble for moving all their classic statistical theory books to the religious section.",
+  "They call me Dirichlet because all my potential is latent and awaiting allocation.",
+  "Do Neural Networks Dream of Strictly Convex Sheep?",
+  "Shout out to all those algorithms creating fake Twitter accounts to follow me. You predicted I'd be cool before I was cool. #falsepositive",
+  "I got this vintage Dirichlet prior at the thrift shop for like $5. There's some light updating on a few corners but otherwise it's like new.",
+  "Batch algorithms: YOLO*, Online algorithms: Keep Updates and Carry On  (*You Only Learn Once).",
+  "Tech joke accounts are so mainstream. I'm setting up a @DeepMLHipster account where I tweet ironically about tweeting ironically about ML."
+];
+
+function Terminal(config) {
   var term = config.el || document.getElementById("term");
   var termBuffer = config.initialMessage || "";
   var lineBuffer = config.initialLine || "";
   var cwd = config.cwd || "~/";
-  var tags = config.tags || ["red", "blue", "white", "bold"];
+  var tags = config.tags || ["error", "notice", "bold", "italic"];
   var processCommand = config.cmd || false;
   var maxBufferLength = config.maxBufferLength || 8192;
   var commandHistory = [];
@@ -14,8 +48,17 @@ function fauxTerm(config) {
   var maxCommandHistory = config.maxCommandHistory || 100;
   var autoFocus = config.autoFocus || false;
   var coreCmds = {
-    clear: clear
-    // whoami: whoamiFunc
+    clear: clear,
+    reset: clear,
+    reboot: reboot,
+    whoami: whoami,
+    help: help,
+    info: info,
+    about: info,
+    email: email,
+    color: color,
+    joke: joke,
+    version: version
   };
 
   var fauxInput = document.createElement("textarea");
@@ -26,7 +69,7 @@ function fauxTerm(config) {
   }
 
   function getLeader() {
-    return cwd + "$ ";
+    return cwd + "~$ ";
   }
 
   function renderTerm() {
@@ -40,7 +83,7 @@ function fauxTerm(config) {
   function writeToBuffer(str) {
     termBuffer += str;
 
-    //Stop the buffer getting massive.
+    // Stop the buffer getting massive.
     if (termBuffer.length > maxBufferLength) {
       var diff = termBuffer.length - maxBufferLength;
       termBuffer = termBuffer.substr(diff);
@@ -65,15 +108,132 @@ function fauxTerm(config) {
     return "";
   }
 
-  function whoamiFunc(argv, argc) {
-    termBuffer = userName;
-    return userName;
+  function reboot(argv, argc) {
+    window.location.reload();
+  }
+
+  function whoami(argv, argc) {
+    return "\n> {bold}{notice}" + userName + "{/notice}{/bold}\n\n";
+  }
+
+  function help(argv, argc) {
+
+    let helpText = "";
+    helpText += "\n";
+    helpText += "{italic}{bold}List of available commands:{/bold}\n";
+
+    helpText += "\n";
+    helpText += "{notice}'reboot'{/notice}          - resets session \n";
+    helpText += "{notice}'clear'{/notice}           - clears terminal buffer \n";
+    helpText += "{notice}'reset'{/notice}           - clears terminal buffer \n";
+    helpText += "{notice}'whoami'{/notice}          - who am I? \n";
+    helpText += "{notice}'info'{/notice}            - some personal info about me \n";
+    helpText += "{notice}'about'{/notice}           - some personal info about me \n";
+    helpText += "{notice}'color [COLOR]'{/notice}   - available colors: [green, orange, white] \n";
+    helpText += "{notice}'joke'{/notice}            - computer will try to tell you a joke \n";
+    helpText += "{notice}'version'{/notice}         - stats for nerds \n";
+    helpText += "\n";
+
+    helpText += "**HINT**: You can use arrow keys to browse through command history ;-)\n";
+    helpText += "\n";
+
+    return helpText + "{/italic}";
+  }
+
+  function info(argv, argc) {
+    let infoText = "";
+    infoText += "\n";
+    infoText += "{italic}{notice}{bold}### ABOUT ME ### {/bold}{/notice}\n";
+    infoText += "\n";
+
+    infoText += "Name: [{notice}Pavel Sanatov{/notice}] \n";
+
+    infoText += "\n";
+    infoText += "Twitter/Facebook/Instagram: [{notice}@lejvap{/notice}] \n";
+    infoText += "\n";
+
+    infoText += "Fun fact: [{notice}On the Internet of Things nobody knows you're a toaster{/notice}] \n";
+
+
+    infoText += "\n";
+    infoText += "If you want to see my email, type: '{notice}email{/notice}' \n";
+    infoText += "\n";
+
+    return infoText + "{/italic}";
+  }
+
+  function email(argv, argc) {
+    let emailText = "{italic}";
+    emailText += "\n";
+    emailText += "{notice}{bold}Please, see commit history @GitHub!{/bold}\n";
+    emailText += "\n";
+
+    return emailText + "{/italic}";
+  }
+
+  function color(argv, argc) {
+    if (argv.length === 2) {
+      const availableColors = ["green", "orange", "white"];
+      const color = argv[1];
+      if (availableColors.includes(color)) {
+        let termClassList = document.getElementById("term").classList;
+        // termClassList = "";
+        // debugger;
+        // termClassList.replace("term-default", color);
+        switch (color) {
+          case "green":
+            termClassList.replace(termClassList[1], "term-default");
+            document.getElementsByClassName("bell")[0].style.background = "#0da350 !important";
+            break;
+          case "orange":
+            termClassList.replace(termClassList[1], "term-orange");
+            document.getElementsByClassName("bell")[0].style.background = "#e6aa4a !important";
+            break;
+          case "white":
+            termClassList.replace(termClassList[1], "term-white");
+            document.getElementsByClassName("bell")[0].style.background = "#fff !important";
+            break;
+          default:
+            termClassList.replace(termClassList[1], "term-default");
+            document.getElementsByClassName("bell")[0].style.background = "#0da350 !important";
+        }
+
+        return "Color has been changed!\n";
+      }
+    } else {
+      return "{italic}{bold}Warning: cannot find desired color!{/bold}{/italic}\n";
+    }
+  }
+
+  function joke(argv, argc) {
+    let jokeText = "";
+
+    const randomJokeNumber = Math.floor(Math.random() * jokes.length);
+    const joke = jokes[randomJokeNumber];
+
+    jokeText += "\n";
+    jokeText += "{notice}Computer says:{/notice}\n";
+    jokeText += "{italic}{bold}" + joke + "{/bold}{/italic}\n";
+    jokeText += "\n";
+
+    return jokeText;
+  }
+
+  function version(argv, argc) {
+    let versionText = "";
+    
+    versionText += "\n";
+    versionText += "{bold}> {notice}v0.0.420{/notice}{/bold}";
+    versionText += "\n";
+
+    return versionText + "\n";
   }
 
   function isCoreCommand(line) {
     if (coreCmds.hasOwnProperty(line)) {
       return true;
     }
+
     return false;
   }
 
@@ -83,51 +243,45 @@ function fauxTerm(config) {
   }
 
   function processLine() {
-    //Dispatch command
+    // Dispatch command
     var stdout,
       line = lineBuffer,
       argv = line.split(" "),
       argc = argv.length;
 
-    var cmd = argv[0];
+    const cmd = argv[0];
 
     lineBuffer += "\n";
     writeToBuffer(getLeader() + lineBuffer);
     lineBuffer = "";
 
-    //If it's not a blank line.
+    // If it's not a blank line.
     if (cmd !== "") {
-      if (cmd === "whoami") {
-        stdout = "guest\n";
-        writeToBuffer(stdout);
-
-        addLineToHistory(line);
-      } else {
-        //If the command is not registered by the core.
-        if (!isCoreCommand(cmd)) {
-          //User registered command
-          if (processCommand) {
-            stdout = processCommand(argv, argc);
-          } else {
-            stdout =
-              "{white}{bold}" + cmd + "{/bold}{/white}: command not found\n";
-          }
+      if (!isCoreCommand(cmd)) {
+        // User registered command
+        if (processCommand) {
+          stdout = processCommand(argv, argc);
         } else {
-          //Execute a core command
-          stdout = coreCommand(argv, argc);
-        }
-
-        //If an actual command happened.
-        if (stdout === false) {
           stdout =
-            "{white}{bold}" + cmd + "{/bold}{/white}: command not found\n";
+            "\n{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}{error}: command not found!{/error}\n"
+            + "Type {notice}'help'{/notice} to see list of available commands.{/italic}\n\n";
         }
-
-        stdout = renderStdOut(stdout);
-        writeToBuffer(stdout);
-
-        addLineToHistory(line);
+      } else {
+        // Execute a core command
+        stdout = coreCommand(argv, argc);
       }
+
+      // If an actual command happened.
+      if (stdout === false) {
+        stdout =
+          "\n{italic}{notice}{bold}" + cmd.trim() + "{/bold}{/notice}{error}: command not found!{/error}\n"
+          + "Type {notice}'help'{/notice} to see list of available commands.{/italic}\n\n";
+      }
+
+      stdout = renderStdOut(stdout);
+      writeToBuffer(stdout);
+
+      addLineToHistory(line);
     }
 
     renderTerm();
@@ -146,23 +300,12 @@ function fauxTerm(config) {
   }
 
   function isInputKey(keyCode) {
-    var inputKeyMap = [
-      32,
-      190,
-      192,
-      189,
-      187,
-      220,
-      221,
-      219,
-      222,
-      186,
-      188,
-      191
-    ];
+    const inputKeyMap = [32, 190, 192, 189, 187, 220, 221, 219, 222, 186, 188, 191];
+
     if (inputKeyMap.indexOf(keyCode) > -1) {
       return true;
     }
+
     return false;
   }
 
@@ -178,25 +321,33 @@ function fauxTerm(config) {
     }
 
     if (newIndex > -1) {
-      //Change line to something from history.
+      // Change line to something from history.
       lineBuffer = commandHistory[newIndex];
     } else {
-      //Blank line...
+      // Blank line...
       lineBuffer = "";
     }
   }
 
-  function acceptInput(e) {
+  function processInput(e) {
+    // TODO: Add support for `&&` in the future 
     e.preventDefault();
-
     fauxInput.value = "";
 
     if ((e.keyCode >= 48 && e.keyCode <= 90) || isInputKey(e.keyCode)) {
       if (!e.ctrlKey) {
-        //Character input
+        // Character input
         lineBuffer += e.key;
       } else {
-        //Hot key input? I.e Ctrl+C
+        // Hot key input (i.e Ctrl+C)
+        // TOOD: Fix Ctrl+C
+        // if (e.key === "c") {
+        //   lineBuffer = lineBuffer;
+        //   lineBuffer = "\n";
+        // }
+        if (e.key === "r") {
+          window.location.reload();
+        }
       }
     } else if (e.keyCode === 13) {
       processLine();
@@ -213,48 +364,29 @@ function fauxTerm(config) {
     renderTerm();
   }
 
-  term.addEventListener("click", function(e) {
+  const focusFunction = function (e) {
     fauxInput.focus();
-    term.classList.add("term-focus");
-  });
-  fauxInput.addEventListener("keydown", acceptInput);
-  fauxInput.addEventListener("blur", function(e) {
-    term.classList.remove("term-focus");
-  });
+    term.classList.add("term-default");
+  };
+
+  // TODO: If we click without listener for a click event
+  // then we couldn't type anymore
+  focusFunction();
+
+  term.addEventListener("click", focusFunction);
+
+  fauxInput.addEventListener("keydown", processInput);
+
   renderTerm();
 }
-var myTerm = new fauxTerm({
+
+// TODO: Not sure why we have to create new constructor,
+// but without it we cannot create instance of terminal
+new Terminal({
   el: document.getElementById("term"),
-  cwd: `${userName}@${domain}:/`,
-  initialMessage: `Welcome to ${domain}!\n`
-  // tags: ["red", "blue", "white", "bold"],
-  // maxBufferLength: 8192,
-  // maxCommandHistory: 500,
-  // cmd: function(argv, argc) {
-  //   console.log(argv);
-
-  //   for (command of argv) {
-  //     console.log("command: ", command);
-  //     if (command == "whoami") {
-  //       termBuffer = "";
-  //       lineBuffer = termBuffer + getLeader() + "whoami";
-  //     }
-  //   }
-
-  //   return false;
-  // }
-});
-var mySecondTerm = new fauxTerm({
-  el: document.getElementById("term2"),
-  cwd: `${userName}@${domain}:/`,
-  initialMessage: `Welcome to ${domain}!\n`
-  /*
-  autoFocus: false,
-  tags: ['red', 'blue', 'white', 'bold'],
+  cwd: domain === "" ? `<strong>${userName}@future:</strong>` : `<strong>${userName}@${domain}:</strong>`,
+  initialMessage: domain === "" ? `Welcome to the future!\n` : `Welcome to ${domain}!\n`,
+  autoFocus: true,
   maxBufferLength: 8192,
-  maxCommandHistory: 500,
-  cmd: function(argv, argc) {
-    console.log(argv);
-    return false;
-  }*/
+  maxCommandHistory: 500
 });

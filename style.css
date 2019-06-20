@@ -4,13 +4,11 @@
   -webkit-box-sizing: border-box;
 }
 
-html,
-body {
-  /* background: black; */
-  margin: 0;
+html, body {
+  background: black;
   height: 100%;
   width: 100%;
-  min-width: 980px;
+  margin: 0 auto;
 }
 
 .faux-input {
@@ -26,46 +24,84 @@ body {
 
 .term {
   background: #000;
-  width: 100%;
   height: 100%;
+  margin: 0 auto;
+  /* font-family: 'Share Tech Mono', monospace; */
   color: #aaa;
   font-family: 'Share Tech Mono', monospace;
   font-weight: 400;
   font-smooth: never;
   -webkit-font-smoothing: none;
-  font-size: 10.5pt;
-  padding: 3px;
+  font-size: 14pt;
+  font-weight: 100;
+  padding: 1em;
   word-wrap: break-word;
   white-space: pre-wrap;
   display: block;
-  line-height: 1.2em;
+  line-height: 0.9em;
   overflow-y: scroll;
   position: relative;
-  color: #888;
+  color: #0da350;
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1.337s;
 }
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.term-default {
+  color: #0da350;
+}
+
+.term-white {
+  color: #fff;
+}
+
+.term-orange {
+  color: #e6aa4a;
+}
+
+/* TODO: Make auto focus when browser tab has focus */
 
 .term-focus {
   text-shadow: none;
-  color: #ccc;
+  /* color: #1bff80; */
 }
 
-.term .red {
-  color: red;
-}
-.term .blue {
-  color: blue;
-}
-.term .white {
+.term .error {
+  opacity: 0.6;
   color: #fff;
 }
+
+.term .notice {
+  opacity: 0.7;
+  color: #fff;
+}
+
 .term .bold {
   font-weight: bold;
 }
 
+.term .italic {
+  font-style: italic;
+}
+
 .bell {
-  width: 0.1em;
+  margin: 0.08em;
+  width: 10px;
   height: 1.1em;
-  line-height: 1.2em;
+  line-height: 1.0em;
+  /* TODO: Make background switch dynamic when switching terminal colors */
+  opacity: 0.6;
   background: #fff;
   position: absolute;
   animation: flash 1s infinite;
@@ -90,6 +126,7 @@ body {
 }
 
 /* Let's get this party started */
+
 ::-webkit-scrollbar {
   width: 12px;
 }
